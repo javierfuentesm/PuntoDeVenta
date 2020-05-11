@@ -1,74 +1,82 @@
-import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
-import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { RectButton, ScrollView } from 'react-native-gesture-handler';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  Container,
+  Header,
+  Content,
+  List,
+  ListItem,
+  Thumbnail,
+  Text,
+  Left,
+  Body,
+  Right,
+  Button,
+} from "native-base";
+import _ from "lodash";
+import { fetchProductos } from "../redux/actions";
+import moment from "moment";
 
-export default function LinksScreen() {
+export const Orders = () => {
+  const productos = useSelector((state) => state.productos);
+  const [orden, setOrden] = useState([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchProductos());
+  }, []);
+  const handleAddToCart = (product) => {
+    const idunico = Date.now();
+    const newproduct = { ...product, idunico };
+    setOrden([...orden, newproduct]);
+    console.log(orden);
+  };
+
+const result = [...orden.reduce( (mp, o) => {
+  if (!mp.has(o.id)) mp.set(o.id, { ...o, count: 0 });
+  mp.get(o.id).count++;
+  return mp;
+}, new Map).values()];
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <OptionButton
-        icon="md-school"
-        label="Read the Expo documentation"
-        onPress={() => WebBrowser.openBrowserAsync('https://docs.expo.io')}
-      />
+    <Container>
+      <Content>
+        <List>
+          {_.map(productos, (producto, key) => (
+            <ListItem thumbnail key={key}>
+              <Left>
+                <Thumbnail square source={{ uri: producto.imagen }} />
+              </Left>
+              <Body>
+                <Text>{producto.nombre}</Text>
+                <Text note numberOfLines={3}>
+                  {`Tenemos ${producto.cantidad} piezas`}
+                  {"\n"}
+                  {`El precio es de ${producto.precio}`}
+                  {"\n"}
+                  {`El el carrito hay  ${  _.map(result, (o) =>{ 
+                  if(o.id===producto.id)
+                  return o.count; 
+                  })}`}
+               
+                </Text>
+              </Body>
+              <Right>
+                <Button onPress={() => handleAddToCart(producto)} transparent>
+                  <Text>Añadir</Text>
+                </Button>
+              </Right>
+            </ListItem>
+          ))}
+        </List>
 
-      <OptionButton
-        icon="md-compass"
-        label="Read the React Navigation documentation"
-        onPress={() => WebBrowser.openBrowserAsync('https://reactnavigation.org')}
-      />
-
-      <OptionButton
-        icon="ios-chatboxes"
-        label="Ask a question on the forums"
-        onPress={() => WebBrowser.openBrowserAsync('https://forums.expo.io')}
-        isLastOption
-      />
-    </ScrollView>
+        <Button full success>
+          <Text>
+            Cobrar {orden &&
+              Object.values(orden).reduce((t, { precio }) => t + +precio, 0)}
+          </Text>
+        </Button>
+      </Content>
+    </Container>
   );
-}
-
-function OptionButton({ icon, label, onPress, isLastOption }) {
-  return (
-    <RectButton style={[styles.option, isLastOption && styles.lastOption]} onPress={onPress}>
-      <View style={{ flexDirection: 'row' }}>
-        <View style={styles.optionIconContainer}>
-          <Ionicons name={icon} size={22} color="rgba(0,0,0,0.35)" />
-        </View>
-        <View style={styles.optionTextContainer}>
-          <Text style={styles.optionText}>{label}</Text>
-        </View>
-      </View>
-    </RectButton>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fafafa',
-  },
-  contentContainer: {
-    paddingTop: 15,
-  },
-  optionIconContainer: {
-    marginRight: 12,
-  },
-  option: {
-    backgroundColor: '#fdfdfd',
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: 0,
-    borderColor: '#ededed',
-  },
-  lastOption: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  optionText: {
-    fontSize: 15,
-    alignSelf: 'flex-start',
-    marginTop: 1,
-  },
-});
+};
+export default Orders;

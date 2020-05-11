@@ -38,6 +38,8 @@ import Constants from "expo-constants";
 
 const Home = () => {
   const productos = useSelector((state) => state.productos);
+  const dispatch = useDispatch();
+
   const [modalVisible, setModalVisible] = useState(false);
   const getPermissionAsync = async () => {
     if (Constants.platform.ios) {
@@ -59,14 +61,10 @@ const Home = () => {
       if (!result.cancelled) {
         setForm({ ...form, imagen: result.uri });
       }
-
-      console.log(result);
-    } catch (E) {
-      console.log(E);
+    } catch (error) {
+      console.log(error);
     }
   };
-
-  const dispatch = useDispatch();
 
   const [form, setForm] = useState({
     nombre: "",

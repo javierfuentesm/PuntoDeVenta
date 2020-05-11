@@ -32,10 +32,39 @@ import {
   Right,
 } from "native-base";
 import _ from "lodash";
+import * as ImagePicker from "expo-image-picker";
+import * as Permissions from "expo-permissions";
+import Constants from "expo-constants";
 
 const Home = () => {
   const productos = useSelector((state) => state.productos);
   const [modalVisible, setModalVisible] = useState(false);
+  const getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
+      }
+    }
+  };
+
+  const _pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!result.cancelled) {
+        setForm({ ...form, imagen: result.uri });
+      }
+
+      console.log(result);
+    } catch (E) {
+      console.log(E);
+    }
+  };
 
   const dispatch = useDispatch();
 
@@ -44,10 +73,12 @@ const Home = () => {
     costo: "",
     imagen: "",
     precio: "",
+    cantidad: "",
   });
 
   useEffect(() => {
     dispatch(fetchProductos());
+    getPermissionAsync();
   }, []);
 
   return (
@@ -87,14 +118,28 @@ const Home = () => {
                   onChangeText={(value) => setForm({ ...form, precio: value })}
                 />
               </Item>
-              <Item floatingLabel last>
-                <Label>Imagen</Label>
+              <Item floatingLabel>
+                <Label>Cantidad</Label>
                 <Input
-                  name="imagen"
-                  value={form.imagen}
-                  onChangeText={(value) => setForm({ ...form, imagen: value })}
+                  name="cantidad"
+                  value={form.cantidad}
+                  onChangeText={(value) =>
+                    setForm({ ...form, cantidad: value })
+                  }
                 />
               </Item>
+              <Text>{"\n"}</Text>
+              <Label>Imagen</Label>
+              <Button onPress={_pickImage}>
+                <Text>Escoge Imagen</Text>
+              </Button>
+              {form.foto && (
+                <Image
+                  source={{ uri: form.imagen }}
+                  style={{ width: 200, height: 200 }}
+                />
+              )}
+
               <Text>
                 {"\n"}
                 {"\n"}
@@ -115,6 +160,7 @@ const Home = () => {
                   costo: "",
                   imagen: "",
                   precio: "",
+                  cantidad: "",
                 });
               }}
             >
@@ -138,6 +184,13 @@ const Home = () => {
       <Button
         onPress={() => {
           setModalVisible(true);
+          setForm({
+            nombre: "",
+            costo: "",
+            imagen: "",
+            precio: "",
+            cantidad: "",
+          });
         }}
         block
       >

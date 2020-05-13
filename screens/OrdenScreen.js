@@ -8,16 +8,19 @@ import {
   Thumbnail,
   Text,
   Left,
+  Icon,
   Body,
   Right,
   Button,
 } from "native-base";
+import { StyleSheet, TouchableHighlight } from "react-native";
 import _ from "lodash";
-import { fetchProductos,setOrden } from "../redux/actions";
+import { fetchProductos, setOrden } from "../redux/actions";
 
 export const Orders = () => {
   const productos = useSelector((state) => state.productos);
   const [cartProducts, setCartProdcuts] = useState([]);
+  const [costo, setCosto] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchProductos());
@@ -31,6 +34,14 @@ export const Orders = () => {
       setCartProdcuts(newProductos);
     }
   }, [productos]);
+  useEffect(() => {
+    setCosto(
+      Object.values(cartProducts).reduce(
+        (t, { precio, count }) => t + +precio * count,
+        0
+      )
+    );
+  }, [cartProducts]);
 
   const handleAddToCart = (product) => {
     const newProductos = [...cartProducts];
@@ -60,11 +71,12 @@ export const Orders = () => {
           {_.map(cartProducts, (producto, key) => (
             <ListItem thumbnail key={key}>
               <Left>
-                <Thumbnail square source={{ uri: producto.imagen }} />
+                <Thumbnail circular source={{ uri: producto.imagen }} />
               </Left>
               <Body>
-                <Text>{producto.nombre}</Text>
-                <Text note numberOfLines={3}>
+                <Text style={styles.titleText}>{producto.nombre}</Text>
+                <Text style={styles.listText} note numberOfLines={12}>
+                  {"\n"}
                   {`Tenemos ${producto.cantidad - producto.count} piezas`}
                   {"\n"}
                   {`El precio es de ${producto.precio}`}
@@ -72,39 +84,63 @@ export const Orders = () => {
                   {producto.count > 0 && (
                     <>{`En el carrito hay ${producto.count}`}</>
                   )}
+                  {"\n"}
                 </Text>
               </Body>
               <Right>
                 {producto.cantidad - producto.count > 0 && (
                   <>
-                    <Button
+                    <TouchableHighlight
                       onPress={() => handleAddToCart(producto)}
-                      transparent
                     >
-                      <Text>Añadir</Text>
-                    </Button>
+                      <Icon
+                        type="MaterialIcons"
+                        name="add-shopping-cart"
+                        style={{
+                          fontSize: 40,
+                          color: "#08a045",
+                          marginBottom: 15,
+                        }}
+                      />
+                    </TouchableHighlight>
                   </>
                 )}
-                <Button onPress={() => handleDeleteCart(producto)} transparent>
-                  <Text>Eliminar</Text>
-                </Button>
+                {producto.count > 0 && (
+                  <TouchableHighlight
+                    onPress={() => handleDeleteCart(producto)}
+                  >
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="cart-remove"
+                      style={{ fontSize: 40, color: "#d9455f" }}
+                    />
+                  </TouchableHighlight>
+                )}
               </Right>
             </ListItem>
           ))}
         </List>
-
       </Content>
+      {cartProducts && costo > 0 ? (
         <Button onPress={() => dispatch(setOrden(cartProducts))} full success>
-          <Text>
-            Cobrar{" "}
-            {cartProducts &&
-              Object.values(cartProducts).reduce(
-                (t, { precio, count }) => t + +precio * count,
-                0
-              )}
-          </Text>
+          <Text style={styles.listText}>{`Cobrar $ ${costo}`}</Text>
         </Button>
+      ) : (
+        <Button disabled full success>
+          <Text style={styles.listText}>Aún no tienes nada que cobrar </Text>
+        </Button>
+      )}
     </Container>
   );
 };
+const styles = StyleSheet.create({
+  listText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+});
 export default Orders;

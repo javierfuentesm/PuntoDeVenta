@@ -128,7 +128,7 @@ const Home = () => {
               </Item>
               <Text>{"\n"}</Text>
               <Label>Imagen</Label>
-              <Button onPress={_pickImage}>
+              <Button onPress={_pickImage} style={{ marginBottom: 15 }}>
                 <Text>Escoge Imagen</Text>
               </Button>
               {form.foto && (
@@ -137,12 +137,6 @@ const Home = () => {
                   style={{ width: 200, height: 200 }}
                 />
               )}
-
-              <Text>
-                {"\n"}
-                {"\n"}
-                {"\n"}
-              </Text>
             </Form>
 
             <TouchableHighlight
@@ -180,6 +174,9 @@ const Home = () => {
       </Modal>
 
       <Button
+       style={{
+        backgroundColor: '#00a896',
+      }}
         onPress={() => {
           setModalVisible(true);
           setForm({
@@ -212,39 +209,48 @@ const Home = () => {
                 </Body>
               </Left>
               <Right>
-                <TouchableHighlight
-                  style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                  onPress={() => {
-                    setForm(producto);
-                    setModalVisible(true);
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <Icon
-                    type="AntDesign"
-                    name="edit"
-                    style={{ fontSize: 25, color: "black" }}
-                  />
-                </TouchableHighlight>
-                <Text>{"\n"}</Text>
-                <TouchableHighlight
-                  style={{ ...styles.openButton, backgroundColor: "#E50000" }}
-                  onPress={() => {
-                    dispatch(deleteProducto(producto.id));
-                  }}
-                >
-                  <Icon
-                    type="Entypo"
-                    name="cross"
-                    style={{ fontSize: 25, color: "black" }}
-                  />
-                </TouchableHighlight>
+                  <TouchableHighlight
+                    onPress={() => {
+                      setForm(producto);
+                      setModalVisible(true);
+                    }}
+                  >
+                    <Icon
+                      type="AntDesign"
+                      name="edit"
+                      style={{ fontSize: 35, color: "#00a896",marginRight:20 }}
+                    />
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    onPress={() => {
+                      dispatch(deleteProducto(producto.id));
+                    }}
+                  >
+                    <Icon
+                      type="Entypo"
+                      name="cross"
+                      style={{ fontSize: 35, color: "#d9455f" }}
+                    />
+                  </TouchableHighlight>
+                </View>
               </Right>
             </CardItem>
             <CardItem>
               <Body>
                 <Image
                   source={{ uri: producto.imagen }}
-                  style={{ height: 200, width: 200, flex: 1 }}
+                  style={{
+                    height: 300,
+                    width: 300,
+                    flex: 1,
+                    alignSelf: "center",
+                  }}
                 />
               </Body>
             </CardItem>
@@ -253,7 +259,7 @@ const Home = () => {
                 <Icon
                   type="MaterialIcons"
                   name="storage"
-                  style={{ fontSize: 25, color: "blue" }}
+                  style={{ fontSize: 25, color: "#05668d" }}
                 />
                 <Text>Cantidad :{producto.cantidad}</Text>
               </Left>
@@ -261,7 +267,7 @@ const Home = () => {
                 <Icon
                   type="FontAwesome"
                   name="money"
-                  style={{ fontSize: 25, color: "green" }}
+                  style={{ fontSize: 25, color: "#00a896" }}
                 />
                 <Text>Precio: {producto.precio}</Text>
               </Left>
@@ -269,7 +275,7 @@ const Home = () => {
                 <Icon
                   type="MaterialIcons"
                   name="attach-money"
-                  style={{ fontSize: 25, color: "green" }}
+                  style={{ fontSize: 25, color: "#02c39a" }}
                 />
                 <Text>Ganancia: {producto.precio - producto.costo}</Text>
               </Left>
@@ -284,8 +290,6 @@ const Home = () => {
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    /*     justifyContent: "center",
-    alignItems: "center", */
     marginTop: 22,
   },
   modalView: {
@@ -293,10 +297,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
-    /*   alignItems: "center", 
-  
 
-  */
     shadowOffset: {
       width: 1000,
       height: 100,

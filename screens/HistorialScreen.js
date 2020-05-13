@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import moment from 'moment';
 import {
   Container,
   Content,
@@ -21,6 +22,8 @@ import {
   View,
 } from "react-native";
 import { fetchOrdenes } from "../redux/actions";
+import 'moment/locale/es'  // without this line it didn't work
+
 
 export const Historial = () => {
   const ordenes = useSelector((state) => state.ordenes);
@@ -56,7 +59,7 @@ export const Historial = () => {
                     <Thumbnail square source={{ uri: producto.imagen }} />
                   </Left>
                   <Body>
-                    <Text>{producto.nombre}</Text>
+                    <Text style={styles.titleText}>{producto.nombre}</Text>
                     <Text note numberOfLines={5}>
                       {`Vendiste ${producto.count} piezas a un precio de ${producto.precio}`}
                       {"\n"}
@@ -82,10 +85,9 @@ export const Historial = () => {
         <List>
           {_.map(ordenes, (orden, key) => (
             <ListItem thumbnail key={key}>
-              {console.log(orden)}
               <Body>
-                <Text>{new Date(orden.fecha).toString().substr(4, 12)}</Text>
-                <Text note numberOfLines={2}>
+                <Text style={styles.titleText}>{(moment(new Date(orden.fecha)).locale('es').format('LLLL'))}</Text>
+                <Text style={styles.listText}  note numberOfLines={2}>
                   {`Tuviste una ganacia total de  ${orden.ganaciaTotalOrden} `}
                   {"\n"}
                   {`Invertiste ${orden.inversionTotal}`}
@@ -142,6 +144,14 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  listText: {
+    fontWeight: "bold",
+    fontSize: 18,
   },
 });
 export default Historial;

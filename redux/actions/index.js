@@ -24,7 +24,7 @@ export const fetchProductos = () => async (dispatch) => {
   );
 };
 export const fetchOrdenes = () => async (dispatch) => {
-  ordenesRef.onSnapshot(
+  ordenesRef.orderBy('fecha','desc').onSnapshot(
     (docSnapshot) => {
       const ordenes = [];
       docSnapshot.forEach((doc) => {

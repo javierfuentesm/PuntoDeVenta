@@ -1,6 +1,7 @@
 const reducer = (
   state = {
     productos: [],
+    ordenes: [],
   },
   action
 ) => {
@@ -9,6 +10,11 @@ const reducer = (
       return {
         ...state,
         productos: action.payload,
+      };
+    case "FETCH_ORDENES":
+      return {
+        ...state,
+        ordenes: action.payload,
       };
 
     case "LOG_OUT":

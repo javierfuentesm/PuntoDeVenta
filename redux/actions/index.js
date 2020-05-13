@@ -1,6 +1,8 @@
-import { productosRef, storageService } from "../../utils/firebase";
+import { productosRef, ordenesRef, storageService } from "../../utils/firebase";
+import _ from "lodash";
 
 const FETCH_PRODUCTOS = "FETCH_PRODUCTOS";
+const FETCH_ORDENES = "FETCH_ORDENES";
 
 export const fetchProductos = () => async (dispatch) => {
   productosRef.onSnapshot(
@@ -14,6 +16,25 @@ export const fetchProductos = () => async (dispatch) => {
       dispatch({
         type: FETCH_PRODUCTOS,
         payload: productos,
+      });
+    },
+    (err) => {
+      console.log(`Encountered error: ${err}`);
+    }
+  );
+};
+export const fetchOrdenes = () => async (dispatch) => {
+  ordenesRef.onSnapshot(
+    (docSnapshot) => {
+      const ordenes = [];
+      docSnapshot.forEach((doc) => {
+        const orden = doc.data();
+        orden.id = doc.id;
+        ordenes.push(orden);
+      });
+      dispatch({
+        type: FETCH_ORDENES,
+        payload: ordenes,
       });
     },
     (err) => {
@@ -40,13 +61,18 @@ export const updateProducto = (id, data) => async (dispatch) => {
     .then(dispatch(updatePhoto(id, finalProduct)));
 };
 
+export const updateProductoStorage = (id, numero) => async () => {
+  productosRef
+    .doc(id)
+    .update({cantidad:numero})
+};
+
 export const updatePhoto = (id, producto) => async () => {
   const response = await fetch(producto.imagen);
   const blob = await response.blob();
   const refStorage = storageService.ref().child(`productos/${id}.jpg`);
   const uploadTask = refStorage.put(blob);
   uploadTask.on("state_changed", (snapshot) => {
-    console.log(snapshot);
     console.log((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
   });
   uploadTask.then(() => {
@@ -58,4 +84,24 @@ export const updatePhoto = (id, producto) => async () => {
         productosRef.doc(id).set({ ...producto, imagen: downloadURL });
       });
   });
+};
+
+export const setOrden = (data) => async (dispatch) => {
+  //Se limpian productos que no se compraron
+  const orden = _.reject(data, (o) => o.count === 0);
+  orden.forEach((producto) => {
+    dispatch(updateProductoStorage(producto.id,(+producto.cantidad - +producto.count)))
+    producto.precioTotalProducto = +producto.precio * +producto.count;
+    producto.costoTotalProducto  = +producto.count * +producto.costo;
+    producto.gananciaTotalProducto  =(producto.precioTotalProducto-producto.costoTotalProducto);
+  });
+  const ganaciaTotalOrden =Object.values(orden).reduce(
+    (t, { gananciaTotalProducto }) => t + +gananciaTotalProducto ,
+    0
+  )
+  const inversionTotal = Object.values(orden).reduce(
+    (t, { costoTotalProducto }) => t + +costoTotalProducto ,
+    0
+  )
+  ordenesRef.add({ orden, fecha: Date.now(), ganaciaTotalOrden,inversionTotal });
 };

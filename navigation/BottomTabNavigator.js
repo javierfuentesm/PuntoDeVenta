@@ -2,8 +2,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as React from 'react';
 
 import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import Home from '../screens/HomeScreen';
+import Historial from '../screens/HistorialScreen';
+import Orders from '../screens/OrdenScreen';
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Home';
@@ -18,17 +19,25 @@ export default function BottomTabNavigator({ navigation, route }) {
     <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
       <BottomTab.Screen
         name="Home"
-        component={HomeScreen}
+        component={Home}
         options={{
           title: 'Productos',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
         }}
       />
       <BottomTab.Screen
-        name="Links"
-        component={LinksScreen}
+        name="Ordenes"
+        component={Orders}
         options={{
-          title: 'Resources',
+          title: 'Ordenes',
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-cart" />,
+        }}
+      />
+      <BottomTab.Screen
+        name="Historial"
+        component={Historial}
+        options={{
+          title: 'Historial',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
         }}
       />
@@ -42,7 +51,9 @@ function getHeaderTitle(route) {
   switch (routeName) {
     case 'Home':
       return 'Productos';
-    case 'Links':
+    case 'Ordenes':
       return 'Orden de compra';
+    case 'Historial':
+      return 'Historial';
   }
 }

@@ -13,7 +13,7 @@ import {
   Right,
   Button,
 } from "native-base";
-import { StyleSheet, TouchableHighlight } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import _ from "lodash";
 import { fetchProductos, setOrden } from "../redux/actions";
 
@@ -90,7 +90,7 @@ export const Orders = () => {
               <Right>
                 {producto.cantidad - producto.count > 0 && (
                   <>
-                    <TouchableHighlight
+                    <TouchableOpacity
                       onPress={() => handleAddToCart(producto)}
                     >
                       <Icon
@@ -102,11 +102,11 @@ export const Orders = () => {
                           marginBottom: 15,
                         }}
                       />
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                   </>
                 )}
                 {producto.count > 0 && (
-                  <TouchableHighlight
+                  <TouchableOpacity
                     onPress={() => handleDeleteCart(producto)}
                   >
                     <Icon
@@ -114,7 +114,7 @@ export const Orders = () => {
                       name="cart-remove"
                       style={{ fontSize: 40, color: "#d9455f" }}
                     />
-                  </TouchableHighlight>
+                  </TouchableOpacity>
                 )}
               </Right>
             </ListItem>
@@ -127,7 +127,7 @@ export const Orders = () => {
         </Button>
       ) : (
         <Button disabled full success>
-          <Text style={styles.listText}>Aún no tienes nada que cobrar </Text>
+          <Text style={styles.buttonText}>Aún no tienes nada que cobrar </Text>
         </Button>
       )}
     </Container>
@@ -137,6 +137,9 @@ const styles = StyleSheet.create({
   listText: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  buttonText: {
+    fontSize: 17,
   },
   titleText: {
     fontSize: 20,

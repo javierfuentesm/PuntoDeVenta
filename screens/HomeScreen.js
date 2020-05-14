@@ -6,14 +6,7 @@ import {
   updateProducto,
   deleteProducto,
 } from "../redux/actions";
-import {
-  Alert,
-  Modal,
-  StyleSheet,
-  TouchableHighlight,
-  Image,
-  View,
-} from "react-native";
+import { Modal, StyleSheet, TouchableOpacity, Image, View } from "react-native";
 
 import {
   Container,
@@ -26,6 +19,7 @@ import {
   Text,
   Button,
   Icon,
+  Spinner,
   Left,
   Body,
   Label,
@@ -86,7 +80,7 @@ const Home = () => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
+          setModalVisible(false);
         }}
       >
         <View style={styles.centeredView}>
@@ -131,15 +125,21 @@ const Home = () => {
               <Button onPress={_pickImage} style={{ marginBottom: 15 }}>
                 <Text>Escoge Imagen</Text>
               </Button>
-              {form.foto && (
+
+              {form.imagen !== "" && (
                 <Image
                   source={{ uri: form.imagen }}
-                  style={{ width: 200, height: 200 }}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    alignSelf: "center",
+                    marginBottom: 10,
+                  }}
                 />
               )}
             </Form>
 
-            <TouchableHighlight
+            <TouchableOpacity
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {
                 form.id
@@ -159,24 +159,24 @@ const Home = () => {
               <Text style={styles.textStyle}>
                 {form.id ? "Guardar" : "Crear"}
               </Text>
-            </TouchableHighlight>
-            <Text>{"\n"}</Text>
-            <TouchableHighlight
+            </TouchableOpacity>
+            <TouchableOpacity
               style={{ ...styles.openButton, backgroundColor: "#E50000" }}
               onPress={() => {
                 setModalVisible(false);
               }}
             >
               <Text style={styles.textStyle}>Cerrar</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
       <Button
-       style={{
-        backgroundColor: '#00a896',
-      }}
+        style={{
+          backgroundColor: "#00a896",
+          marginBottom: 10,
+        }}
         onPress={() => {
           setModalVisible(true);
           setForm({
@@ -189,99 +189,111 @@ const Home = () => {
         }}
         block
       >
-        <Text>Añadir Producto</Text>
+        <Text style={styles.buttonText}>Añadir Producto</Text>
       </Button>
 
       <Content>
-        {_.map(productos, (producto, key) => (
-          <Card style={{ flex: 0 }} key={key}>
-            <CardItem>
-              <Left>
-                <Body>
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {producto.nombre}
-                  </Text>
-                </Body>
-              </Left>
-              <Right>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <TouchableHighlight
-                    onPress={() => {
-                      setForm(producto);
-                      setModalVisible(true);
-                    }}
-                  >
-                    <Icon
-                      type="AntDesign"
-                      name="edit"
-                      style={{ fontSize: 35, color: "#00a896",marginRight:20 }}
+        {productos.length > 0 ? (
+          <>
+            {_.map(productos, (producto, key) => (
+              <Card style={{ flex: 0 }} key={key}>
+                <CardItem>
+                  <Left>
+                    <Body>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {producto.nombre}
+                      </Text>
+                    </Body>
+                  </Left>
+                  <Right>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          setForm(producto);
+                          setModalVisible(true);
+                        }}
+                      >
+                        <Icon
+                          type="AntDesign"
+                          name="edit"
+                          style={{
+                            fontSize: 35,
+                            color: "#00a896",
+                            marginRight: 20,
+                          }}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          dispatch(deleteProducto(producto.id));
+                        }}
+                      >
+                        <Icon
+                          type="Entypo"
+                          name="cross"
+                          style={{ fontSize: 35, color: "#d9455f" }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </Right>
+                </CardItem>
+                <CardItem>
+                  <Body>
+                    <Image
+                      source={{ uri: producto.imagen }}
+                      style={{
+                        height: 300,
+                        width: 300,
+                        flex: 1,
+                        alignSelf: "center",
+                      }}
                     />
-                  </TouchableHighlight>
-                  <TouchableHighlight
-                    onPress={() => {
-                      dispatch(deleteProducto(producto.id));
-                    }}
-                  >
-                    <Icon
-                      type="Entypo"
-                      name="cross"
-                      style={{ fontSize: 35, color: "#d9455f" }}
-                    />
-                  </TouchableHighlight>
-                </View>
-              </Right>
-            </CardItem>
-            <CardItem>
-              <Body>
-                <Image
-                  source={{ uri: producto.imagen }}
-                  style={{
-                    height: 300,
-                    width: 300,
-                    flex: 1,
-                    alignSelf: "center",
-                  }}
-                />
-              </Body>
-            </CardItem>
-            <CardItem>
-              <Left>
-                <Icon
-                  type="MaterialIcons"
-                  name="storage"
-                  style={{ fontSize: 25, color: "#05668d" }}
-                />
-                <Text>Cantidad :{producto.cantidad}</Text>
-              </Left>
-              <Left>
-                <Icon
-                  type="FontAwesome"
-                  name="money"
-                  style={{ fontSize: 25, color: "#00a896" }}
-                />
-                <Text>Precio: {producto.precio}</Text>
-              </Left>
-              <Left>
-                <Icon
-                  type="MaterialIcons"
-                  name="attach-money"
-                  style={{ fontSize: 25, color: "#02c39a" }}
-                />
-                <Text>Ganancia: {producto.precio - producto.costo}</Text>
-              </Left>
-            </CardItem>
-          </Card>
-        ))}
+                  </Body>
+                </CardItem>
+                <CardItem>
+                  <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+                    <Left>
+                      <Icon
+                        type="MaterialIcons"
+                        name="storage"
+                        style={{ fontSize: 25, color: "#05668d" }}
+                      />
+                      <Text>{producto.cantidad}</Text>
+                    </Left>
+                    <Left>
+                      <Icon
+                        type="MaterialIcons"
+                        name="attach-money"
+                        style={{ fontSize: 25, color: "#00a896" }}
+                      />
+                      <Text>{producto.precio}</Text>
+                    </Left>
+                    <Left>
+                      <Icon
+                        type="FontAwesome"
+                        name="money"
+                        style={{ fontSize: 25, color: "#02c39a" }}
+                      />
+                      <Text>{producto.precio - producto.costo}</Text>
+                    </Left>
+                  </View>
+                </CardItem>
+              </Card>
+            ))}
+          </>
+        ) : (
+          <Spinner color="green" />
+        )}
       </Content>
     </Container>
   );
@@ -312,6 +324,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
+    marginBottom: 10,
   },
   textStyle: {
     color: "white",
@@ -321,6 +334,9 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+  },
+  buttonText: {
+    fontSize: 17,
   },
 });
 

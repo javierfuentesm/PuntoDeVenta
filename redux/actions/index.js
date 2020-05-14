@@ -6,7 +6,7 @@ const FETCH_PRODUCTOS = "FETCH_PRODUCTOS";
 const FETCH_ORDENES = "FETCH_ORDENES";
 
 export const fetchProductos = () => async (dispatch) => {
-  productosRef.onSnapshot(
+  productosRef.orderBy("nombre", "asc").onSnapshot(
     (docSnapshot) => {
       const productos = [];
       docSnapshot.forEach((doc) => {
@@ -44,15 +44,9 @@ export const fetchOrdenes = () => async (dispatch) => {
   );
 };
 export const fetchOrdenesRange = (start, end) => async (dispatch) => {
-  let start = new Date("2020-05-13");
-
-  console.log(start, "inicio");
-  let end = new Date("2020-05-13");
-  end.setDate(end.getDate() + 1);
-  console.log(end, "final");
 
   ordenesRef
-    .where("fecha", ">=", +start)
+    .where("fecha", ">=", +start.set({hour:0,minute:0,second:0,millisecond:0}))
     .where("fecha", "<=", +end)
     .orderBy("fecha", "desc")
     .onSnapshot(

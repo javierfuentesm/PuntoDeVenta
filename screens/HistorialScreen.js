@@ -13,14 +13,9 @@ import {
   Button,
 } from "native-base";
 import _ from "lodash";
-import {
-  Alert,
-  Modal,
-  StyleSheet,
-  TouchableHighlight,
-  View,
-} from "react-native";
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 import { fetchOrdenes } from "../redux/actions";
+import { fetchOrdenesRange } from "../redux/actions";
 import "moment/locale/es"; // without this line it didn't work
 import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment/min/moment-with-locales";
@@ -36,6 +31,10 @@ export const Historial = () => {
     endDate: null,
     displayedDate: moment(),
   });
+  const [totales, setTotales] = useState({
+    ganancia: "",
+    inversion: "",
+  });
 
   const setDates = (dates) => {
     setDatePicker((prevState) => ({
@@ -47,6 +46,26 @@ export const Historial = () => {
   useEffect(() => {
     dispatch(fetchOrdenes());
   }, []);
+
+  useEffect(() => {
+    if (ordenes.length > 0) {
+      let ganancia = 0,
+        inversion = 0;
+      ordenes.forEach((orden) => {
+        ganancia = ganancia + +orden.ganaciaTotalOrden;
+        inversion = inversion + +orden.inversionTotal;
+      });
+      setTotales({ ganancia, inversion });
+    }
+  }, [ordenes]);
+
+  useEffect(() => {
+    if (datePicker.startDate && datePicker.endDate) {
+      if (datePicker.startDate.isValid() && datePicker.endDate.isValid()) {
+        dispatch(fetchOrdenesRange(datePicker.startDate, datePicker.endDate));
+      }
+    }
+  }, [datePicker]);
 
   const viewDetail = (product) => {
     setDetail(product);
@@ -62,18 +81,25 @@ export const Historial = () => {
         displayedDate={datePicker.displayedDate}
         range
       >
-        <Text>Click me!</Text>
+        <Text style={styles.buttonText}>Escoge el rango de fechas</Text>
       </DateRangePicker>
-      <Text>
-        {`${ moment(datePicker.startDate).locale("es").format("LLLL")}  y ${ moment(datePicker.endDate).locale("es").format("LLLL")}  `}
-      </Text>
+      <Button bordered primary>
+        <Text>
+          {`${moment(datePicker.startDate)
+            .locale("es")
+            .format("LL")}  y ${moment(datePicker.endDate)
+            .locale("es")
+            .format("LL")}
+            `}
+        </Text>
+      </Button>
 
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
+          setModalVisible(false);
         }}
       >
         <View style={styles.centeredView}>
@@ -95,14 +121,14 @@ export const Historial = () => {
                 </ListItem>
               ))}
             </List>
-            <TouchableHighlight
+            <TouchableOpacity
               style={{ ...styles.openButton, backgroundColor: "#E50000" }}
               onPress={() => {
                 setModalVisible(false);
               }}
             >
               <Text style={styles.textStyle}>Cerrar</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -130,6 +156,11 @@ export const Historial = () => {
           ))}
         </List>
       </Content>
+        <Button disabled full success>
+          <Text style={styles.buttonText}>
+            {`Ganacia total : ${totales.ganancia}  Inversión total: ${totales.inversion}`}
+          </Text>
+        </Button>
     </Container>
   );
 };
@@ -186,6 +217,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  buttonText: {
+    fontSize: 17,
   },
 });
 export default Historial;

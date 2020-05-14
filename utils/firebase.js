@@ -15,5 +15,5 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 export const storageService = firebase.storage();
-export const productosRef = firebase.firestore().collection("productos");
-export const ordenesRef = firebase.firestore().collection("ordenes");
+export const productosRef = firebase.firestore().collection("productosPantoja");
+export const ordenesRef = firebase.firestore().collection("ordenesPantoja");

@@ -1,5 +1,6 @@
 import { productosRef, ordenesRef, storageService } from "../../utils/firebase";
 import _ from "lodash";
+import moment from "moment";
 
 const FETCH_PRODUCTOS = "FETCH_PRODUCTOS";
 const FETCH_ORDENES = "FETCH_ORDENES";
@@ -24,7 +25,7 @@ export const fetchProductos = () => async (dispatch) => {
   );
 };
 export const fetchOrdenes = () => async (dispatch) => {
-  ordenesRef.orderBy('fecha','desc').onSnapshot(
+  ordenesRef.orderBy("fecha", "desc").onSnapshot(
     (docSnapshot) => {
       const ordenes = [];
       docSnapshot.forEach((doc) => {
@@ -41,6 +42,36 @@ export const fetchOrdenes = () => async (dispatch) => {
       console.log(`Encountered error: ${err}`);
     }
   );
+};
+export const fetchOrdenesRange = (start, end) => async (dispatch) => {
+  let start = new Date("2020-05-13");
+
+  console.log(start, "inicio");
+  let end = new Date("2020-05-13");
+  end.setDate(end.getDate() + 1);
+  console.log(end, "final");
+
+  ordenesRef
+    .where("fecha", ">=", +start)
+    .where("fecha", "<=", +end)
+    .orderBy("fecha", "desc")
+    .onSnapshot(
+      (docSnapshot) => {
+        const ordenes = [];
+        docSnapshot.forEach((doc) => {
+          const orden = doc.data();
+          orden.id = doc.id;
+          ordenes.push(orden);
+        });
+        dispatch({
+          type: FETCH_ORDENES,
+          payload: ordenes,
+        });
+      },
+      (err) => {
+        console.log(`Encountered error: ${err}`);
+      }
+    );
 };
 
 export const setProducto = (data) => async (dispatch) => {
@@ -62,9 +93,7 @@ export const updateProducto = (id, data) => async (dispatch) => {
 };
 
 export const updateProductoStorage = (id, numero) => async () => {
-  productosRef
-    .doc(id)
-    .update({cantidad:numero})
+  productosRef.doc(id).update({ cantidad: numero });
 };
 
 export const updatePhoto = (id, producto) => async () => {
@@ -90,18 +119,26 @@ export const setOrden = (data) => async (dispatch) => {
   //Se limpian productos que no se compraron
   const orden = _.reject(data, (o) => o.count === 0);
   orden.forEach((producto) => {
-    dispatch(updateProductoStorage(producto.id,(+producto.cantidad - +producto.count)))
+    dispatch(
+      updateProductoStorage(producto.id, +producto.cantidad - +producto.count)
+    );
     producto.precioTotalProducto = +producto.precio * +producto.count;
-    producto.costoTotalProducto  = +producto.count * +producto.costo;
-    producto.gananciaTotalProducto  =(producto.precioTotalProducto-producto.costoTotalProducto);
+    producto.costoTotalProducto = +producto.count * +producto.costo;
+    producto.gananciaTotalProducto =
+      producto.precioTotalProducto - producto.costoTotalProducto;
   });
-  const ganaciaTotalOrden =Object.values(orden).reduce(
-    (t, { gananciaTotalProducto }) => t + +gananciaTotalProducto ,
+  const ganaciaTotalOrden = Object.values(orden).reduce(
+    (t, { gananciaTotalProducto }) => t + +gananciaTotalProducto,
     0
-  )
+  );
   const inversionTotal = Object.values(orden).reduce(
-    (t, { costoTotalProducto }) => t + +costoTotalProducto ,
+    (t, { costoTotalProducto }) => t + +costoTotalProducto,
     0
-  )
-  ordenesRef.add({ orden, fecha: Date.now(), ganaciaTotalOrden,inversionTotal });
+  );
+  ordenesRef.add({
+    orden,
+    fecha: Date.now(),
+    ganaciaTotalOrden,
+    inversionTotal,
+  });
 };

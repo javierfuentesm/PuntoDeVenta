@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import moment from 'moment';
+import moment from "moment";
 import {
   Container,
   Content,
@@ -22,14 +22,33 @@ import {
   View,
 } from "react-native";
 import { fetchOrdenes } from "../redux/actions";
-import 'moment/locale/es'  // without this line it didn't work
-
+import "moment/locale/es"; // without this line it didn't work
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export const Historial = () => {
   const ordenes = useSelector((state) => state.ordenes);
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [detail, setDetail] = useState();
+  const [date, setDate] = useState( Date.now());
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === "ios");
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
 
   useEffect(() => {
     dispatch(fetchOrdenes());
@@ -82,12 +101,31 @@ export const Historial = () => {
       </Modal>
 
       <Content>
+        <Button onPress={showDatepicker} title="Show date picker!">
+  
+          <Text>Escoge rango</Text>
+        </Button>
+
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            timeZoneOffsetInMinutes={0}
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            display="default"
+            onChange={onChange}
+          />
+        )}
+
         <List>
           {_.map(ordenes, (orden, key) => (
             <ListItem thumbnail key={key}>
               <Body>
-                <Text style={styles.titleText}>{(moment(new Date(orden.fecha)).locale('es').format('LLLL'))}</Text>
-                <Text style={styles.listText}  note numberOfLines={2}>
+                <Text style={styles.titleText}>
+                  {moment(new Date(orden.fecha)).locale("es").format("LLLL")}
+                </Text>
+                <Text style={styles.listText} note numberOfLines={2}>
                   {`Tuviste una ganacia total de  ${orden.ganaciaTotalOrden} `}
                   {"\n"}
                   {`Invertiste ${orden.inversionTotal}`}

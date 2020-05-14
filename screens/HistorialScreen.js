@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
 import {
   Container,
   Content,
@@ -23,32 +22,27 @@ import {
 } from "react-native";
 import { fetchOrdenes } from "../redux/actions";
 import "moment/locale/es"; // without this line it didn't work
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateRangePicker from "react-native-daterange-picker";
+import moment from "moment/min/moment-with-locales";
+moment.locale("en");
 
 export const Historial = () => {
   const ordenes = useSelector((state) => state.ordenes);
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [detail, setDetail] = useState();
-  const [date, setDate] = useState( Date.now());
-  const [mode, setMode] = useState("date");
-  const [show, setShow] = useState(false);
+  const [datePicker, setDatePicker] = useState({
+    startDate: null,
+    endDate: null,
+    displayedDate: moment(),
+  });
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
-    setDate(currentDate);
+  const setDates = (dates) => {
+    setDatePicker((prevState) => ({
+      ...prevState,
+      ...dates,
+    }));
   };
-
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode("date");
-  };
-
 
   useEffect(() => {
     dispatch(fetchOrdenes());
@@ -61,6 +55,19 @@ export const Historial = () => {
 
   return (
     <Container>
+      <DateRangePicker
+        onChange={setDates}
+        endDate={datePicker.endDate}
+        startDate={datePicker.startDate}
+        displayedDate={datePicker.displayedDate}
+        range
+      >
+        <Text>Click me!</Text>
+      </DateRangePicker>
+      <Text>
+        {`${ moment(datePicker.startDate).locale("es").format("LLLL")}  y ${ moment(datePicker.endDate).locale("es").format("LLLL")}  `}
+      </Text>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -101,23 +108,6 @@ export const Historial = () => {
       </Modal>
 
       <Content>
-        <Button onPress={showDatepicker} title="Show date picker!">
-  
-          <Text>Escoge rango</Text>
-        </Button>
-
-        {show && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            timeZoneOffsetInMinutes={0}
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            display="default"
-            onChange={onChange}
-          />
-        )}
-
         <List>
           {_.map(ordenes, (orden, key) => (
             <ListItem thumbnail key={key}>
@@ -190,6 +180,12 @@ const styles = StyleSheet.create({
   listText: {
     fontWeight: "bold",
     fontSize: 18,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 export default Historial;

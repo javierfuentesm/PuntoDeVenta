@@ -29,12 +29,12 @@ export const Orders = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (user) {
+    if (user==='mio') {
       dispatch(fetchProductos());
     } else {
       dispatch(fetchProductosMiguel());
     }
-  }, []);
+  }, [user]);
   useEffect(() => {
     if (productos.length) {
       const newProductos = [...productos];

@@ -90,16 +90,15 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (user === "mio") {
       dispatch(fetchProductos());
     } else {
       dispatch(fetchProductosMiguel());
     }
     getPermissionAsync();
-  }, []);
+  }, []); */
   useEffect(() => {
-    console.log(user);
     if (user === "mio") {
       dispatch(fetchProductos());
     } else {
@@ -178,8 +177,8 @@ const Home = () => {
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {
                 form.id
-                  ? dispatch(updateProducto2(form.id, form))
-                  : dispatch(setProducto2(form));
+                  ? dispatch(() => updateProducto2(form.id, form))
+                  : dispatch(() => setProducto2(form));
 
                 setModalVisible(!modalVisible);
                 setForm({

@@ -48,13 +48,13 @@ export const Historial = () => {
     }));
   };
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (user === "mio") {
       dispatch(fetchOrdenes());
     } else {
       dispatch(fetchOrdenesMiguel());
     }
-  }, []);
+  }, []); */
   useEffect(() => {
     if (user === "mio") {
       dispatch(fetchOrdenes());

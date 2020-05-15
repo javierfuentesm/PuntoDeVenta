@@ -165,7 +165,7 @@ export const setProducto = (data) => async (dispatch) => {
 };
 export const setProductoMiguel = (data) => async (dispatch) => {
   productosMiguelRef.add(data).then((createdRecord) => {
-    dispatch(updatePhoto(createdRecord.id, data));
+    dispatch(updatePhotoMiguel(createdRecord.id, data));
   });
 };
 export const deleteProducto = (id) => () => {
@@ -189,14 +189,14 @@ export const updateProductoMiguel = (id, data) => async (dispatch) => {
   productosMiguelRef
     .doc(id)
     .set(finalProduct)
-    .then(dispatch(updatePhoto(id, finalProduct)));
+    .then(dispatch(updatePhotoMiguel(id, finalProduct)));
 };
 
 export const updateProductoStorage = (id, numero) => async () => {
   productosRef.doc(id).update({ cantidad: numero });
 };
 export const updateProductoStorageMiguel = (id, numero) => async () => {
-  productosMiguelRef.doc(id).update({ cantidad: numero });
+  productosMiguelRef.doc(id).updatePhotoMiguel({ cantidad: numero });
 };
 
 export const updatePhoto = (id, producto) => async () => {
@@ -214,6 +214,24 @@ export const updatePhoto = (id, producto) => async () => {
       .getDownloadURL()
       .then((downloadURL) => {
         productosRef.doc(id).set({ ...producto, imagen: downloadURL });
+      });
+  });
+};
+export const updatePhotoMiguel = (id, producto) => async () => {
+  const response = await fetch(producto.imagen);
+  const blob = await response.blob();
+  const refStorage = storageService.ref().child(`productosMiguel/${id}.jpg`);
+  const uploadTask = refStorage.put(blob);
+  uploadTask.on("state_changed", (snapshot) => {
+    console.log((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+  });
+  uploadTask.then(() => {
+    storageService
+      .ref()
+      .child(`productosMiguel/${id}.jpg`)
+      .getDownloadURL()
+      .then((downloadURL) => {
+        productosMiguelRef.doc(id).set({ ...producto, imagen: downloadURL });
       });
   });
 };

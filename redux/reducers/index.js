@@ -2,6 +2,7 @@ const reducer = (
   state = {
     productos: [],
     ordenes: [],
+    user:'mio'
   },
   action
 ) => {
@@ -15,6 +16,11 @@ const reducer = (
       return {
         ...state,
         ordenes: action.payload,
+      };
+    case "SET_USER":
+      return {
+        ...state,
+        user: action.payload,
       };
 
     case "LOG_OUT":

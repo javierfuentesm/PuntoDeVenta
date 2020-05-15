@@ -14,14 +14,19 @@ import {
 } from "native-base";
 import _ from "lodash";
 import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
-import { fetchOrdenes } from "../redux/actions";
-import { fetchOrdenesRange } from "../redux/actions";
+import {
+  fetchOrdenes,
+  fetchOrdenesRange,
+  fetchOrdenesMiguel,
+  fetchOrdenesRangeMiguel,
+} from "../redux/actions";
 import "moment/locale/es"; // without this line it didn't work
 import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment/min/moment-with-locales";
 moment.locale("en");
 
 export const Historial = () => {
+  const user = useSelector((state) => state.user);
   const ordenes = useSelector((state) => state.ordenes);
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,8 +49,19 @@ export const Historial = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchOrdenes());
+    if (user === "mio") {
+      dispatch(fetchOrdenes());
+    } else {
+      dispatch(fetchOrdenesMiguel());
+    }
   }, []);
+  useEffect(() => {
+    if (user === "mio") {
+      dispatch(fetchOrdenes());
+    } else {
+      dispatch(fetchOrdenesMiguel());
+    }
+  }, [user]);
 
   useEffect(() => {
     if (ordenes.length > 0) {
@@ -56,13 +72,21 @@ export const Historial = () => {
         inversion = inversion + +orden.inversionTotal;
       });
       setTotales({ ganancia, inversion });
+    } else {
+      setTotales({ ganancia: 0, inversion: 0 });
     }
   }, [ordenes]);
 
   useEffect(() => {
     if (datePicker.startDate && datePicker.endDate) {
       if (datePicker.startDate.isValid() && datePicker.endDate.isValid()) {
-        dispatch(fetchOrdenesRange(datePicker.startDate, datePicker.endDate));
+        if (user === "mio") {
+          dispatch(fetchOrdenesRange(datePicker.startDate, datePicker.endDate));
+        } else {
+          dispatch(
+            fetchOrdenesRangeMiguel(datePicker.startDate, datePicker.endDate)
+          );
+        }
       }
     }
   }, [datePicker]);
@@ -156,11 +180,11 @@ export const Historial = () => {
           ))}
         </List>
       </Content>
-        <Button disabled full success>
-          <Text style={styles.buttonText}>
-            {`Ganacia total : ${totales.ganancia}  Inversión total: ${totales.inversion}`}
-          </Text>
-        </Button>
+      <Button disabled full success>
+        <Text style={styles.buttonText}>
+          {`Ganacia total : ${totales.ganancia}  Inversión total: ${totales.inversion}`}
+        </Text>
+      </Button>
     </Container>
   );
 };

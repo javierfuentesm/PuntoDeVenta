@@ -2,6 +2,7 @@ import * as firebase from "firebase";
 import "firebase/firestore";
 import "firebase/storage";
 
+
 const firebaseConfig = {
   apiKey: "AIzaSyAo_xESELlNzBFv9-BEJi89W2IKZaiuUEA",
   authDomain: "morfu-bc705.firebaseapp.com",
@@ -17,3 +18,5 @@ firebase.initializeApp(firebaseConfig);
 export const storageService = firebase.storage();
 export const productosRef = firebase.firestore().collection("productos");
 export const ordenesRef = firebase.firestore().collection("ordenes");
+export const productosMiguelRef = firebase.firestore().collection("productosMiguel");
+export const ordenesMiguelRef = firebase.firestore().collection("ordenesMiguel");

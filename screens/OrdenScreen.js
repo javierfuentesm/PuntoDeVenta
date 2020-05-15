@@ -15,15 +15,25 @@ import {
 } from "native-base";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import _ from "lodash";
-import { fetchProductos, setOrden } from "../redux/actions";
+import {
+  fetchProductos,
+  setOrden,
+  fetchProductosMiguel,
+  setOrdenMiguel,
+} from "../redux/actions";
 
 export const Orders = () => {
   const productos = useSelector((state) => state.productos);
   const [cartProducts, setCartProdcuts] = useState([]);
   const [costo, setCosto] = useState([]);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchProductos());
+    if (user) {
+      dispatch(fetchProductos());
+    } else {
+      dispatch(fetchProductosMiguel());
+    }
   }, []);
   useEffect(() => {
     if (productos.length) {
@@ -90,9 +100,7 @@ export const Orders = () => {
               <Right>
                 {producto.cantidad - producto.count > 0 && (
                   <>
-                    <TouchableOpacity
-                      onPress={() => handleAddToCart(producto)}
-                    >
+                    <TouchableOpacity onPress={() => handleAddToCart(producto)}>
                       <Icon
                         type="MaterialIcons"
                         name="add-shopping-cart"
@@ -106,9 +114,7 @@ export const Orders = () => {
                   </>
                 )}
                 {producto.count > 0 && (
-                  <TouchableOpacity
-                    onPress={() => handleDeleteCart(producto)}
-                  >
+                  <TouchableOpacity onPress={() => handleDeleteCart(producto)}>
                     <Icon
                       type="MaterialCommunityIcons"
                       name="cart-remove"
@@ -122,7 +128,7 @@ export const Orders = () => {
         </List>
       </Content>
       {cartProducts && costo > 0 ? (
-        <Button onPress={() => dispatch(setOrden(cartProducts))} full success>
+        <Button onPress={() => user==='mio' ? dispatch(setOrden(cartProducts)): dispatch(setOrdenMiguel(cartProducts))} full success>
           <Text style={styles.listText}>{`Cobrar $ ${costo}`}</Text>
         </Button>
       ) : (

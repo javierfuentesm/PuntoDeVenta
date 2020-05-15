@@ -5,6 +5,11 @@ import {
   setProducto,
   updateProducto,
   deleteProducto,
+  fetchProductosMiguel,
+  setProductoMiguel,
+  updateProductoMiguel,
+  deleteProductoMiguel,
+  swithcAccount,
 } from "../redux/actions";
 import { Modal, StyleSheet, TouchableOpacity, Image, View } from "react-native";
 
@@ -32,9 +37,11 @@ import Constants from "expo-constants";
 
 const Home = () => {
   const productos = useSelector((state) => state.productos);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [account, setAccount] = useState(false);
   const getPermissionAsync = async () => {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -68,10 +75,38 @@ const Home = () => {
     cantidad: "",
   });
 
+  const setProducto2 = (form) => {
+    if (user === "mio") {
+      dispatch(setProducto(form));
+    } else {
+      dispatch(setProductoMiguel(form));
+    }
+  };
+  const updateProducto2 = (id, form) => {
+    if (user === "mio") {
+      dispatch(updateProducto(id, form));
+    } else {
+      dispatch(updateProductoMiguel(id, form));
+    }
+  };
+
   useEffect(() => {
-    dispatch(fetchProductos());
+    if (user === "mio") {
+      dispatch(fetchProductos());
+    } else {
+      dispatch(fetchProductosMiguel());
+    }
     getPermissionAsync();
   }, []);
+  useEffect(() => {
+    console.log(user);
+    if (user === "mio") {
+      dispatch(fetchProductos());
+    } else {
+      dispatch(fetchProductosMiguel());
+    }
+    getPermissionAsync();
+  }, [user]);
 
   return (
     <Container>
@@ -143,8 +178,8 @@ const Home = () => {
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {
                 form.id
-                  ? dispatch(updateProducto(form.id, form))
-                  : dispatch(setProducto(form));
+                  ? dispatch(updateProducto2(form.id, form))
+                  : dispatch(setProducto2(form));
 
                 setModalVisible(!modalVisible);
                 setForm({
@@ -171,6 +206,23 @@ const Home = () => {
           </View>
         </View>
       </Modal>
+
+      <TouchableOpacity
+        onPress={() => {
+          dispatch(swithcAccount(account));
+          setAccount(!account);
+        }}
+      >
+        <Icon
+          type="MaterialCommunityIcons"
+          name="account-switch"
+          style={{
+            fontSize: 50,
+            color: "#00a896",
+            marginRight: 20,
+          }}
+        />
+      </TouchableOpacity>
 
       <Button
         style={{
@@ -235,7 +287,9 @@ const Home = () => {
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
-                          dispatch(deleteProducto(producto.id));
+                          user === "mio"
+                            ? dispatch(deleteProducto(producto.id))
+                            : dispatch(deleteProductoMiguel(producto.id));
                         }}
                       >
                         <Icon
@@ -261,7 +315,7 @@ const Home = () => {
                   </Body>
                 </CardItem>
                 <CardItem>
-                  <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                     <Left>
                       <Icon
                         type="MaterialIcons"

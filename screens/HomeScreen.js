@@ -53,7 +53,7 @@ const Home = () => {
 
   const _pickImage = async () => {
     try {
-      let result = await ImagePicker.launchImageLibraryAsync({
+      let result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
         aspect: [4, 3],
@@ -90,14 +90,6 @@ const Home = () => {
     }
   };
 
-  /*   useEffect(() => {
-    if (user === "mio") {
-      dispatch(fetchProductos());
-    } else {
-      dispatch(fetchProductosMiguel());
-    }
-    getPermissionAsync();
-  }, []); */
   useEffect(() => {
     if (user === "mio") {
       dispatch(fetchProductos());
@@ -157,7 +149,7 @@ const Home = () => {
               <Text>{"\n"}</Text>
               <Label>Imagen</Label>
               <Button onPress={_pickImage} style={{ marginBottom: 15 }}>
-                <Text>Escoge Imagen</Text>
+                <Text>Toma foto</Text>
               </Button>
 
               {form.imagen !== "" && (

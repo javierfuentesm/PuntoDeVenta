@@ -196,7 +196,7 @@ export const updateProductoStorage = (id, numero) => async () => {
   productosRef.doc(id).update({ cantidad: numero });
 };
 export const updateProductoStorageMiguel = (id, numero) => async () => {
-  productosMiguelRef.doc(id).updatePhotoMiguel({ cantidad: numero });
+  productosMiguelRef.doc(id).update({ cantidad: numero });
 };
 
 export const updatePhoto = (id, producto) => async () => {

@@ -160,7 +160,7 @@ export const Historial = () => {
                 </Text>
                 <Text style={styles.listText} note numberOfLines={2}>
                   {`Tuviste una ganacia total de  ${orden.ganaciaTotalOrden} `}
-                  {"\n"}
+
                   {`Invertiste ${orden.inversionTotal}`}
                 </Text>
               </Body>
@@ -173,11 +173,32 @@ export const Historial = () => {
           ))}
         </List>
       </Content>
-      <Button disabled full success>
-        <Text style={styles.buttonText}>
-          {`Ganacia total : ${totales.ganancia}  Inversión total: ${totales.inversion}`}
-        </Text>
-      </Button>
+      {user === "mio" ? (
+        <Button disabled full success>
+          <Text style={styles.buttonText}>
+            {`Ganacia total : $${totales.ganancia}  Inversión total: $${totales.inversion}`}
+          </Text>
+        </Button>
+      ) : (
+        <>
+          <Button disabled full success>
+            <Text style={styles.buttonText}>
+              {`Ganacia Total : $${totales.ganancia}  `}
+              {`Ganacia Miguel : $${(
+                totales.ganancia -
+                totales.ganancia * 0.2
+              ).toFixed(2)}`}
+            </Text>
+          </Button>
+          <Button disabled full success>
+            <Text style={styles.buttonText}>
+              {`Ganacia Mia $${(totales.ganancia * 0.2).toFixed(
+                2
+              )}  Inversión total: $${totales.inversion}`}
+            </Text>
+          </Button>
+        </>
+      )}
     </Container>
   );
 };

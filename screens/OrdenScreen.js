@@ -29,7 +29,7 @@ export const Orders = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (user==='mio') {
+    if (user === "mio") {
       dispatch(fetchProductos());
     } else {
       dispatch(fetchProductosMiguel());
@@ -81,7 +81,17 @@ export const Orders = () => {
           {_.map(cartProducts, (producto, key) => (
             <ListItem thumbnail key={key}>
               <Left>
-                <Thumbnail circular source={{ uri: producto.imagen }} />
+                {producto.imagen !== "" ? (
+                  <Thumbnail circular source={{ uri: producto.imagen }} />
+                ) : (
+                  <Thumbnail
+                    circular
+                    source={{
+                      uri:
+                        "https://www.cyberscriptsolutions.com/wp-content/uploads/2017/10/default_product_icon.png",
+                    }}
+                  />
+                )}
               </Left>
               <Body>
                 <Text style={styles.titleText}>{producto.nombre}</Text>
@@ -128,7 +138,15 @@ export const Orders = () => {
         </List>
       </Content>
       {cartProducts && costo > 0 ? (
-        <Button onPress={() => user==='mio' ? dispatch(setOrden(cartProducts)): dispatch(setOrdenMiguel(cartProducts))} full success>
+        <Button
+          onPress={() =>
+            user === "mio"
+              ? dispatch(setOrden(cartProducts))
+              : dispatch(setOrdenMiguel(cartProducts))
+          }
+          full
+          success
+        >
           <Text style={styles.listText}>{`Cobrar $ ${costo}`}</Text>
         </Button>
       ) : (

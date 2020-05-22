@@ -140,7 +140,7 @@ const Home = () => {
                 <Label>Cantidad</Label>
                 <Input
                   name="cantidad"
-                  value={form.cantidad}
+                  value={form.cantidad.toString()}
                   onChangeText={(value) =>
                     setForm({ ...form, cantidad: value })
                   }
@@ -294,15 +294,19 @@ const Home = () => {
                 </CardItem>
                 <CardItem>
                   <Body>
-                    <Image
-                      source={{ uri: producto.imagen }}
-                      style={{
-                        height: 300,
-                        width: 300,
-                        flex: 1,
-                        alignSelf: "center",
-                      }}
-                    />
+                    {producto.imagen !== "" ? (
+                      <Image
+                        source={{ uri: producto.imagen }}
+                        style={{
+                          height: 300,
+                          width: 300,
+                          flex: 1,
+                          alignSelf: "center",
+                        }}
+                      />
+                    ) : (
+                      <Text>Aún no se ha subido ninguna imagen</Text>
+                    )}
                   </Body>
                 </CardItem>
                 <CardItem>

@@ -91,16 +91,14 @@ export const swithcAccount = (myAccount) => async (dispatch) => {
   if (myAccount) {
     dispatch({
       type: SET_USER,
-      payload: 'mio',
+      payload: "mio",
     });
-
-  }else {
+  } else {
     dispatch({
       type: SET_USER,
-      payload: 'miguel',
+      payload: "miguel",
     });
   }
-
 };
 
 export const fetchOrdenesRange = (start, end) => async (dispatch) => {
@@ -160,12 +158,16 @@ export const fetchOrdenesRangeMiguel = (start, end) => async (dispatch) => {
 
 export const setProducto = (data) => async (dispatch) => {
   productosRef.add(data).then((createdRecord) => {
-    dispatch(updatePhoto(createdRecord.id, data));
+    if (data.imagen) {
+      dispatch(updatePhoto(createdRecord.id, data));
+    }
   });
 };
 export const setProductoMiguel = (data) => async (dispatch) => {
   productosMiguelRef.add(data).then((createdRecord) => {
-    dispatch(updatePhotoMiguel(createdRecord.id, data));
+    if (data.imagen) {
+      dispatch(updatePhotoMiguel(createdRecord.id, data));
+    }
   });
 };
 export const deleteProducto = (id) => () => {
@@ -268,7 +270,10 @@ export const setOrdenMiguel = (data) => async (dispatch) => {
   const orden = _.reject(data, (o) => o.count === 0);
   orden.forEach((producto) => {
     dispatch(
-      updateProductoStorageMiguel(producto.id, +producto.cantidad - +producto.count)
+      updateProductoStorageMiguel(
+        producto.id,
+        +producto.cantidad - +producto.count
+      )
     );
     producto.precioTotalProducto = +producto.precio * +producto.count;
     producto.costoTotalProducto = +producto.count * +producto.costo;

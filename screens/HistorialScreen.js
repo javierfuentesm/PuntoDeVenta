@@ -181,9 +181,15 @@ export const Historial = () => {
         </Button>
       ) : (
         <>
-          <Button disabled full success>
+          <Button disabled full primary>
             <Text style={styles.buttonText}>
               {`Ganacia Total : $${totales.ganancia}  `}
+              {`Inversión total: $${totales.inversion} `}
+            </Text>
+          </Button>
+          <Button disabled full warning>
+            <Text style={styles.buttonText}>
+              {`Ganacia Mia $${(totales.ganancia * 0.2).toFixed(2)} `}
               {`Ganacia Miguel : $${(
                 totales.ganancia -
                 totales.ganancia * 0.2
@@ -192,9 +198,10 @@ export const Historial = () => {
           </Button>
           <Button disabled full success>
             <Text style={styles.buttonText}>
-              {`Ganacia Mia $${(totales.ganancia * 0.2).toFixed(
-                2
-              )}  Inversión total: $${totales.inversion}`}
+              {`Total de venta $${totales.ganancia + totales.inversion} `}
+              {`Total a recibir $${
+                (totales.ganancia * 0.2).toFixed(2) + totales.inversion
+              } `}
             </Text>
           </Button>
         </>

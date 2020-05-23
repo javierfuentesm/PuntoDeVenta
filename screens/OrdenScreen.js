@@ -58,6 +58,11 @@ export const Orders = () => {
       )
     );
   }, [cartProducts]);
+  useEffect(() => {
+    if (costo - descuento < 0) {
+      setDescuento(0);
+    }
+  }, [costo,descuento]);
 
   const handleAddToCart = (product) => {
     const newProductos = [...cartProducts];
@@ -98,20 +103,23 @@ export const Orders = () => {
                 <Input
                   name="precio"
                   value={descuento.toString()}
-                  style={{marginBottom:30,...styles.price,fontSize:27 }}
-
+                  style={{ marginBottom: 10, ...styles.price, fontSize: 27 }}
                   onChangeText={(value) => setDescuento(value)}
                 />
               </Item>
             </Form>
+            <Text>
+            {"\n"}
+
+            </Text>
 
             <TouchableOpacity
-              style={{ ...styles.openButton, backgroundColor: "#E50000" }}
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {
                 setModalVisible(false);
               }}
             >
-              <Text style={styles.textStyle2}>Cerrar</Text>
+              <Text style={styles.textStyle2}>Guardar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -119,12 +127,22 @@ export const Orders = () => {
 
       <View style={styles.container}>
         <Text style={styles.price}>
+          {descuento > 0 && (
+            <Text
+              style={styles.descuento}
+            >{`Descuento de $${descuento} \n`}</Text>
+          )}
           <Text style={styles.signo}>{`$`}</Text>
-          {`${costo}`}
+          {`${costo - descuento}`}
+          <Text
+            style={styles.sinDescuento}
+          >{`\n Total sin descuento $${costo}`}</Text>
         </Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={styles.textStyle}>Haz un descuento</Text>
-        </TouchableOpacity>
+        {costo > 0 && (
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Text style={styles.textStyle}>Haz un descuento</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <Content>
         <List>
@@ -197,7 +215,7 @@ export const Orders = () => {
           full
           success
         >
-          <Text style={styles.listText}>{`Cobrar $ ${costo}`}</Text>
+          <Text style={styles.listText}>COBRAR</Text>
         </Button>
       ) : (
         <Button disabled full success>
@@ -257,6 +275,14 @@ const styles = StyleSheet.create({
   },
   signo: {
     fontSize: 30,
+    textAlignVertical: "top",
+  },
+  descuento: {
+    fontSize: 15,
+    textAlignVertical: "top",
+  },
+  sinDescuento: {
+    fontSize: 12,
     textAlignVertical: "top",
   },
   buttonText: {

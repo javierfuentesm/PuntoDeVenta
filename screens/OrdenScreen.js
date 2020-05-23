@@ -6,14 +6,18 @@ import {
   List,
   ListItem,
   Thumbnail,
+  Label,
+  Input,
   Text,
   Left,
   Icon,
   Body,
+  Item,
   Right,
+  Form,
   Button,
 } from "native-base";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Modal, TouchableOpacity } from "react-native";
 import _ from "lodash";
 import {
   fetchProductos,
@@ -26,6 +30,8 @@ export const Orders = () => {
   const productos = useSelector((state) => state.productos);
   const [cartProducts, setCartProdcuts] = useState([]);
   const [costo, setCosto] = useState([]);
+  const [descuento, setDescuento] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -76,6 +82,50 @@ export const Orders = () => {
 
   return (
     <Container>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Form>
+              <Item floatingLabel>
+                <Label>Ingresa el Monto del descuento</Label>
+                <Input
+                  name="precio"
+                  value={descuento.toString()}
+                  style={{marginBottom:30,...styles.price,fontSize:27 }}
+
+                  onChangeText={(value) => setDescuento(value)}
+                />
+              </Item>
+            </Form>
+
+            <TouchableOpacity
+              style={{ ...styles.openButton, backgroundColor: "#E50000" }}
+              onPress={() => {
+                setModalVisible(false);
+              }}
+            >
+              <Text style={styles.textStyle2}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <View style={styles.container}>
+        <Text style={styles.price}>
+          <Text style={styles.signo}>{`$`}</Text>
+          {`${costo}`}
+        </Text>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={styles.textStyle}>Haz un descuento</Text>
+        </TouchableOpacity>
+      </View>
       <Content>
         <List>
           {_.map(cartProducts, (producto, key) => (
@@ -158,9 +208,56 @@ export const Orders = () => {
   );
 };
 const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    /*   alignItems: "center", 
+  
+
+  */
+    shadowOffset: {
+      width: 1000,
+      height: 100,
+    },
+    shadowColor: "#000",
+
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
   listText: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  textStyle2: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  textStyle: {
+    fontSize: 15,
+    textAlign: "center",
+    color: "#1787e1",
+    marginBottom: 20,
+  },
+  price: {
+    fontSize: 60,
+    textAlign: "center",
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  container: {
+    backgroundColor: "#FAFAFA",
+  },
+  signo: {
+    fontSize: 30,
+    textAlignVertical: "top",
   },
   buttonText: {
     fontSize: 17,
@@ -168,6 +265,12 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 20,
     fontWeight: "bold",
+  },
+  openButton: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginBottom: 10,
   },
 });
 export default Orders;

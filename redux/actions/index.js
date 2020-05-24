@@ -238,7 +238,7 @@ export const updatePhotoMiguel = (id, producto) => async () => {
   });
 };
 
-export const setOrden = (data) => async (dispatch) => {
+export const setOrden = (data,descuento) => async (dispatch) => {
   //Se limpian productos que no se compraron
   const orden = _.reject(data, (o) => o.count === 0);
   orden.forEach((producto) => {
@@ -253,7 +253,7 @@ export const setOrden = (data) => async (dispatch) => {
   const ganaciaTotalOrden = Object.values(orden).reduce(
     (t, { gananciaTotalProducto }) => t + +gananciaTotalProducto,
     0
-  );
+  )- +descuento;
   const inversionTotal = Object.values(orden).reduce(
     (t, { costoTotalProducto }) => t + +costoTotalProducto,
     0
@@ -263,6 +263,7 @@ export const setOrden = (data) => async (dispatch) => {
     fecha: Date.now(),
     ganaciaTotalOrden,
     inversionTotal,
+    descuento
   });
 };
 export const setOrdenMiguel = (data) => async (dispatch) => {

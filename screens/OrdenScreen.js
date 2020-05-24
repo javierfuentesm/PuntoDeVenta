@@ -209,7 +209,7 @@ export const Orders = () => {
         <Button
           onPress={() =>
             user === "mio"
-              ? dispatch(setOrden(cartProducts))
+              ? dispatch(setOrden(cartProducts,descuento))
               : dispatch(setOrdenMiguel(cartProducts))
           }
           full

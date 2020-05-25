@@ -1,5 +1,7 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import * as React from 'react';
+import {useSelector} from "react-redux";
+
 
 import TabBarIcon from '../components/TabBarIcon';
 import Home from '../screens/HomeScreen';
@@ -9,51 +11,54 @@ import Orders from '../screens/OrdenScreen';
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Home';
 
-export default function BottomTabNavigator({ navigation, route }) {
-  // Set the header title on the parent stack navigator depending on the
-  // currently active tab. Learn more in the documentation:
-  // https://reactnavigation.org/docs/en/screen-options-resolution.html
-  navigation.setOptions({ headerTitle: getHeaderTitle(route) });
+export default function BottomTabNavigator({navigation, route}) {
+    // Set the header title on the parent stack navigator depending on the
+    // currently active tab. Learn more in the documentation:
+    // https://reactnavigation.org/docs/en/screen-options-resolution.html
+    navigation.setOptions({headerTitle: getHeaderTitle(route)});
 
-  return (
-    <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
-      <BottomTab.Screen
-        name="Home"
-        component={Home}
-        options={{
-          title: 'Productos',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
-        }}
-      />
-      <BottomTab.Screen
-        name="Ordenes"
-        component={Orders}
-        options={{
-          title: 'Ordenes',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-cart" />,
-        }}
-      />
-      <BottomTab.Screen
-        name="Historial"
-        component={Historial}
-        options={{
-          title: 'Historial',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
-        }}
-      />
-    </BottomTab.Navigator>
-  );
+
+    return (
+        <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
+            <BottomTab.Screen
+                name="Home"
+                component={Home}
+                options={{
+                    title: 'Productos',
+                    tabBarIcon: ({focused}) => <TabBarIcon focused={focused} name="md-code-working"/>,
+                }}
+            />
+            <BottomTab.Screen
+                name="Ordenes"
+                component={Orders}
+                options={{
+                    title: 'Ordenes',
+                    tabBarIcon: ({focused}) => <TabBarIcon focused={focused} name="md-cart"/>,
+                }}
+            />
+            <BottomTab.Screen
+                name="Historial"
+                component={Historial}
+                options={{
+                    title: 'Historial',
+                    tabBarIcon: ({focused}) => <TabBarIcon focused={focused} name="md-book"/>,
+                }}
+            />
+        </BottomTab.Navigator>
+    );
 }
 
 function getHeaderTitle(route) {
-  const routeName = route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
+    const routeName = route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
+    const user = useSelector((state) => state.user);
+    const texto = user === 'mio' ? 'Blanca' : 'Miguel';
 
-  switch (routeName) {
-    case 'Home':
-      return 'Productos';
-    case 'Ordenes':
-      return 'Orden de compra';
-    case 'Historial':
-      return 'Historial';
-  }
+    switch (routeName) {
+        case 'Home':
+            return `Productos ${texto}`;
+        case 'Ordenes':
+            return `Ordén de compra ${texto}`;
+        case 'Historial':
+            return `Historial ${texto}`;
+    }
 }

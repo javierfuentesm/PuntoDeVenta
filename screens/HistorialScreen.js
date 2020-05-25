@@ -126,7 +126,18 @@ export const Historial = () => {
                             {_.map(detail, (producto, key) => (
                                 <ListItem thumbnail key={key}>
                                     <Left>
-                                        <Thumbnail square source={{uri: producto.imagen}}/>
+                                        {producto.imagen ? (
+                                            <Thumbnail circle source={{uri: producto.imagen}}/>
+
+                                        ) : (
+                                            <Thumbnail
+                                                circular
+                                                source={{
+                                                    uri:
+                                                        "https://www.cyberscriptsolutions.com/wp-content/uploads/2017/10/default_product_icon.png",
+                                                }}
+                                            />
+                                        )}
                                     </Left>
                                     <Body>
                                         <Text style={styles.titleText}>{producto.nombre}</Text>
@@ -140,7 +151,7 @@ export const Historial = () => {
                             ))}
                         </List>
                         <TouchableOpacity
-                            style={{...styles.openButton, backgroundColor: "rgba(229,0,0,0)"}}
+                            style={{...styles.openButton, backgroundColor: "#E50000"}}
                             onPress={() => {
                                 setModalVisible(false);
                             }}

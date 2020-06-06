@@ -12,8 +12,6 @@ import {
   MEASUREMENTID,
 } from "react-native-dotenv";
 
-console.log(APIKEY)
-
 const firebaseConfig = {
   apiKey: APIKEY,
   authDomain: AUTHDOMAIN,

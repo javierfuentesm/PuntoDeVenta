@@ -22,7 +22,6 @@ const reducer = (
         ...state,
         user: action.payload,
       };
-
     case "LOG_OUT":
       state = undefined;
       break;

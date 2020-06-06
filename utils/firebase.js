@@ -22,6 +22,7 @@ const firebaseConfig = {
   appId: APPID,
   measurementId: MEASUREMENTID,
 };
+
 firebase.initializeApp(firebaseConfig);
 export const storageService = firebase.storage();
 export const productosRef = firebase.firestore().collection("productos");

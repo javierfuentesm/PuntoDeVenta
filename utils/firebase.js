@@ -1,22 +1,37 @@
 import * as firebase from "firebase";
 import "firebase/firestore";
 import "firebase/storage";
+import {
+  APIKEY,
+  AUTHDOMAIN,
+  DATABASEURL,
+  PROJECTID,
+  STORAGEBUCKET,
+  MESSAGINGSENDERID,
+  APPID,
+  MEASUREMENTID,
+} from "react-native-dotenv";
 
+console.log(APIKEY)
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAo_xESELlNzBFv9-BEJi89W2IKZaiuUEA",
-  authDomain: "morfu-bc705.firebaseapp.com",
-  databaseURL: "https://morfu-bc705.firebaseio.com",
-  projectId: "morfu-bc705",
-  storageBucket: "morfu-bc705.appspot.com",
-  messagingSenderId: "981909658319",
-  appId: "1:981909658319:web:57a251b3fd951e556df5ba",
-  measurementId: "G-CPTNDWRG1F",
+  apiKey: APIKEY,
+  authDomain: AUTHDOMAIN,
+  databaseURL: DATABASEURL,
+  projectId: PROJECTID,
+  storageBucket: STORAGEBUCKET,
+  messagingSenderId: MESSAGINGSENDERID,
+  appId: APPID,
+  measurementId: MEASUREMENTID,
 };
 
 firebase.initializeApp(firebaseConfig);
 export const storageService = firebase.storage();
 export const productosRef = firebase.firestore().collection("productos");
 export const ordenesRef = firebase.firestore().collection("ordenes");
-export const productosMiguelRef = firebase.firestore().collection("productosMiguel");
-export const ordenesMiguelRef = firebase.firestore().collection("ordenesMiguel");
+export const productosMiguelRef = firebase
+  .firestore()
+  .collection("productosMiguel");
+export const ordenesMiguelRef = firebase
+  .firestore()
+  .collection("ordenesMiguel");

@@ -27,7 +27,7 @@
     "expo-splash-screen": "^0.2.3",
     "expo-web-browser": "~8.2.0",
     "firebase": "7.9.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.25.3",
     "native-base": "2.13.8",
     "react": "~16.9.0",
